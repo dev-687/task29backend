@@ -60,6 +60,10 @@ app.get('/video/:filename',(req,res)=>{
     videoStream.pipe(res);
 
 })
+/** test URL */
+app.get('/',(req,res)=>{
+    res.end("<h1>Base Directory</h1>")
+})
 // app.listen(PORT, () => {
 //     console.log(`Server is running on http://localhost:${PORT}`);
 //   });
