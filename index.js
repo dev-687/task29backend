@@ -28,32 +28,33 @@ cloudinary.config({
 // });
 // const upload=multer({storage})
 
-const upload = multer({ dest: 'uploads/' });
+const storage = multer.memoryStorage(); // Store file in memory (RAM)
+const upload = multer({ storage });
 /** Store video in uplaods folder */
 
-app.post('/api/uploads',upload.single('video'),async(req,res)=>{
-    
-    console.log('React');
-    
-    if(!req.file){
-        return res.status(400).send(`No file found..`);
+app.post('/api/uploads', upload.single('video'), async (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ error: 'No file uploaded' });
     }
+
     try {
-        // Upload the video to Cloudinary
-        const result = await cloudinary.uploader.upload(req.file.path, {
-            resource_type: 'video', // Specify it's a video
-            folder: 'videos' // Cloudinary folder
-        });
-
-        // Delete the temp file
-        fs.unlinkSync(req.file.path);
-
-        res.json({ videoUrl: result.secure_url });
+        // Upload directly from memory to Cloudinary
+        const result = await cloudinary.uploader.upload_stream(
+            { resource_type: 'video', folder: 'videos' },
+            (error, result) => {
+                if (error) {
+                    console.error("Cloudinary upload error:", error);
+                    return res.status(500).json({ error: "Failed to upload video" });
+                }
+                res.json({ videoUrl: result.secure_url });
+            }
+        ).end(req.file.buffer); // Send file from memory
     } catch (error) {
         console.error('Upload error:', error);
         res.status(500).json({ error: 'Failed to upload video' });
     }
-})
+});
+
 
 /*** get video */ 
 app.get('/video/:filename',(req,res)=>{
