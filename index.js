@@ -3,7 +3,6 @@ const fs= require('fs');
 const multer =require('multer');
 const path = require('path');
 const cors = require('cors');
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const cloudinary = require('cloudinary').v2;
 const PORT=5000;
 const app=express()
@@ -15,14 +14,6 @@ cloudinary.config({
     api_key: "458587619856162",
     api_secret: "apsAKmSbBZJRYQkDkBTAe6fdgqM",
 });
-// Multer Storage for Cloudinary
-const storage = new CloudinaryStorage({
-    cloudinary,
-    params: {
-        folder: 'videos', // Folder in Cloudinary
-        resource_type: 'video', // Set to 'video' to store videos
-    },
-});
 
 
 // const storage=multer.diskStorage({
@@ -33,19 +24,33 @@ const storage = new CloudinaryStorage({
 //         cb(null,Date.now()+path.extname(file.originalname));
 //     }
 // });
-const upload=multer({storage})
+// const upload=multer({storage})
 
+const upload = multer({ dest: 'uploads/' });
 /** Store video in uplaods folder */
 
-app.post('/api/uploads',upload.single('video'),(req,res)=>{
+app.post('/api/uploads',upload.single('video'),async(req,res)=>{
 
     console.log('React');
     
     if(!req.file){
         return res.status(400).send(`No file found..`);
     }
-    const videoUrl = `https://task29backend.vercel.app/video/${req.file.filename}`;
-    res.json({videoUrl});
+    try {
+        // Upload the video to Cloudinary
+        const result = await cloudinary.uploader.upload(req.file.path, {
+            resource_type: 'video', // Specify it's a video
+            folder: 'videos' // Cloudinary folder
+        });
+
+        // Delete the temp file
+        fs.unlinkSync(req.file.path);
+
+        res.json({ videoUrl: result.secure_url });
+    } catch (error) {
+        console.error('Upload error:', error);
+        res.status(500).json({ error: 'Failed to upload video' });
+    }
 })
 
 /*** get video */ 
