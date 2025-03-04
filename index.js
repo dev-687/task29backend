@@ -43,7 +43,7 @@ app.get('/video/:filename',(req,res)=>{
     if (!range) {
         return res.status(416).send("Requires Range header");
     }
-    const CHUNK_SIZE = 10 ** 6; // 1MB chunk
+    const CHUNK_SIZE = 10 ** 6;
     const start = Number(range.replace(/\D/g, ""));
     const end = Math.min(start + CHUNK_SIZE, fileSize - 1);
     const contentLength = end - start + 1;
@@ -60,6 +60,8 @@ app.get('/video/:filename',(req,res)=>{
     videoStream.pipe(res);
 
 })
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-  });
+// app.listen(PORT, () => {
+//     console.log(`Server is running on http://localhost:${PORT}`);
+//   });
+
+module.exports = app;
