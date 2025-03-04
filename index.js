@@ -6,7 +6,11 @@ const cors = require('cors');
 const cloudinary = require('cloudinary').v2;
 const PORT=5000;
 const app=express()
-app.use(cors());
+app.use(cors({
+    origin: "https://task29-frontend.vercel.app", // Allow frontend domain
+    methods: "GET,POST,PUT,DELETE",
+    allowedHeaders: "Content-Type,Authorization"
+}));
 app.use(express.json());
 
 cloudinary.config({
