@@ -3,18 +3,36 @@ const fs= require('fs');
 const multer =require('multer');
 const path = require('path');
 const cors = require('cors');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require('cloudinary').v2;
 const PORT=5000;
 const app=express()
 app.use(cors());
 app.use(express.json());
-const storage=multer.diskStorage({
-    destination:(req,res,cb)=>{
-        cb(null,'./uploads');
-    },
-    filename:(req,file,cb)=>{
-        cb(null,Date.now()+path.extname(file.originalname));
-    }
+
+cloudinary.config({
+    cloud_name: "dpbjonuyh",
+    api_key: "458587619856162",
+    api_secret: "apsAKmSbBZJRYQkDkBTAe6fdgqM",
 });
+// Multer Storage for Cloudinary
+const storage = new CloudinaryStorage({
+    cloudinary,
+    params: {
+        folder: 'videos', // Folder in Cloudinary
+        resource_type: 'video', // Set to 'video' to store videos
+    },
+});
+
+
+// const storage=multer.diskStorage({
+//     destination:(req,res,cb)=>{
+//         cb(null,'./uploads');
+//     },
+//     filename:(req,file,cb)=>{
+//         cb(null,Date.now()+path.extname(file.originalname));
+//     }
+// });
 const upload=multer({storage})
 
 /** Store video in uplaods folder */
