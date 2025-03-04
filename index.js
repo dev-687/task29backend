@@ -5,13 +5,9 @@ const path = require('path');
 const cors = require('cors');
 const cloudinary = require('cloudinary').v2;
 require('dotenv').config(); 
-const PORT=5000;
+// const PORT =5000;
 const app=express()
-app.use(cors({
-    origin: "https://task29-frontend.vercel.app",
-    methods: "GET,POST,PUT,DELETE",
-    allowedHeaders: "Content-Type,Authorization"
-}));
+app.use(cors({ origin: "*" }));
 app.use(express.json());
 
 cloudinary.config({
@@ -36,9 +32,7 @@ const upload = multer({ dest: 'uploads/' });
 /** Store video in uplaods folder */
 
 app.post('/api/uploads',upload.single('video'),async(req,res)=>{
-    res.setHeader("Access-Control-Allow-Origin", "https://task29-frontend.vercel.app");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    
     console.log('React');
     
     if(!req.file){
