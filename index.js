@@ -4,20 +4,22 @@ const multer =require('multer');
 const path = require('path');
 const cors = require('cors');
 const cloudinary = require('cloudinary').v2;
+require('dotenv').config(); 
 const PORT=5000;
 const app=express()
 app.use(cors({
-    origin: "https://task29-frontend.vercel.app", // Allow frontend domain
+    origin: "https://task29-frontend.vercel.app",
     methods: "GET,POST,PUT,DELETE",
     allowedHeaders: "Content-Type,Authorization"
 }));
 app.use(express.json());
 
 cloudinary.config({
-    cloud_name: "dpbjonuyh",
-    api_key: "458587619856162",
-    api_secret: "apsAKmSbBZJRYQkDkBTAe6fdgqM",
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
 });
+
 
 
 // const storage=multer.diskStorage({
