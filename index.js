@@ -26,7 +26,7 @@ app.post('/api/uploads',upload.single('video'),(req,res)=>{
     if(!req.file){
         return res.status(400).send(`No file found..`);
     }
-    const videoUrl = `http://localhost:${PORT}/video/${req.file.filename}`;
+    const videoUrl = `https://task29backend.vercel.app/video/${req.file.filename}`;
     res.json({videoUrl});
 })
 
